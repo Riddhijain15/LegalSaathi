@@ -95,21 +95,6 @@ A plain RAG pipeline retrieves once and answers. LegalSaathi's agent **evaluates
 | UI | Streamlit |
 
 ---
-
-## Legal Documents Included
-
-| Document | Coverage |
-|---|---|
-| Code on Wages 2019 | Minimum wages, payment of wages, bonus |
-| Minimum Wages Act 1948 | Wage rates, scheduled employment |
-| Payment of Wages Act 1936 | Wage deductions, payment timelines |
-| Factories Act 1948 | Working hours, safety, overtime |
-| Maternity Benefit Act 1961 | Maternity leave, pay during leave |
-| Payment of Gratuity Act 1972 | Gratuity eligibility and calculation |
-| MGNREGA 2005 | Rural employment guarantee, job cards |
-
----
-
 ---
 
 ## Setup
@@ -206,15 +191,6 @@ What is MNREGA and how do I apply?
 **Why Groq over OpenAI?** Free tier, no credit card, comparable quality for structured legal explanation. Makes this project reproducible for anyone without API cost.
 
 **Why the relevance check loop?** In a legal context, a confident wrong answer is worse than no answer. The agent judges its own retrieval before responding, and retries with a reformulated query rather than answering from weakly-relevant chunks.
-
----
-
-## Limitations
-
-- Covers central labour laws only — state-specific wage schedules and state Acts are not included
-- Translation quality for regional languages beyond Hindi degrades with googletrans
-- No conversation memory across sessions — each query is independent
-- Not a substitute for professional legal advice
 
 ---
 
