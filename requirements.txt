@@ -1,0 +1,14 @@
+langchain
+langchain-community
+langchain-groq
+langgraph
+chromadb
+sentence-transformers
+groq
+streamlit
+python-dotenv
+pypdf
+deep-translator
+langdetect
+tiktoken
+unstructured
