@@ -77,4 +77,14 @@ Streamlit UI
 ### What makes it agentic
 
 A plain RAG pipeline retrieves once and answers. LegalSaathi's agent **evaluates its own retrieval quality** before answering. If the retrieved chunks are not sufficiently relevant to the question, it reformulates the search query and retries — up to 3 times — before falling back gracefully. This prevents hallucination in a domain where a wrong answer has real consequences.
+```
+Key Design Decisions
+
+Why ChromaDB over FAISS? ChromaDB stores chunk metadata (source document, page number) alongside vectors, enabling source citations in every answer. FAISS is faster but supports no metadata, so citations are impossible.
+
+Why MMR retrieval? Maximal Marginal Relevance balances relevance with diversity — preventing 4 chunks from the same section being returned while a more relevant chunk from another Act is missed.
+
+Why Groq over OpenAI? Free tier, no credit card, comparable quality for structured legal explanation. Makes this project reproducible for anyone without API cost.
+
+Why the relevance check loop? In a legal context, a confident wrong answer is worse than no answer. The agent judges its own retrieval before responding, and retries with a reformulated query rather than answering from weakly-relevant chunks.
 
