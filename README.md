@@ -95,7 +95,6 @@ A plain RAG pipeline retrieves once and answers. LegalSaathi's agent **evaluates
 | UI | Streamlit |
 
 ---
----
 
 ## Setup
 
