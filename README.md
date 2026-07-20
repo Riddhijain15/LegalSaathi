@@ -77,14 +77,159 @@ Streamlit UI
 ### What makes it agentic
 
 A plain RAG pipeline retrieves once and answers. LegalSaathi's agent **evaluates its own retrieval quality** before answering. If the retrieved chunks are not sufficiently relevant to the question, it reformulates the search query and retries — up to 3 times — before falling back gracefully. This prevents hallucination in a domain where a wrong answer has real consequences.
+
+---
+
+## Tech Stack
+
+| Component | Technology |
+|---|---|
+| LLM | Groq — llama-3.3-70b-versatile (free) |
+| Agent framework | LangGraph |
+| RAG framework | LangChain |
+| Vector store | ChromaDB (persistent local) |
+| Embeddings | HuggingFace — all-MiniLM-L6-v2 |
+| PDF processing | PyPDF |
+| Translation | deep-translator |
+| Language detection | langdetect |
+| UI | Streamlit |
+
+---
+
+## Legal Documents Included
+
+| Document | Coverage |
+|---|---|
+| Code on Wages 2019 | Minimum wages, payment of wages, bonus |
+| Minimum Wages Act 1948 | Wage rates, scheduled employment |
+| Payment of Wages Act 1936 | Wage deductions, payment timelines |
+| Factories Act 1948 | Working hours, safety, overtime |
+| Maternity Benefit Act 1961 | Maternity leave, pay during leave |
+| Payment of Gratuity Act 1972 | Gratuity eligibility and calculation |
+| MGNREGA 2005 | Rural employment guarantee, job cards |
+
+---
+
+---
+
+## Setup
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/your-username/legalsaathi.git
+cd legalsaathi
 ```
-Key Design Decisions
 
-Why ChromaDB over FAISS? ChromaDB stores chunk metadata (source document, page number) alongside vectors, enabling source citations in every answer. FAISS is faster but supports no metadata, so citations are impossible.
+### 2. Create a virtual environment
 
-Why MMR retrieval? Maximal Marginal Relevance balances relevance with diversity — preventing 4 chunks from the same section being returned while a more relevant chunk from another Act is missed.
+```bash
+python -m venv .venv
 
-Why Groq over OpenAI? Free tier, no credit card, comparable quality for structured legal explanation. Makes this project reproducible for anyone without API cost.
+# Windows
+.venv\Scripts\activate
 
-Why the relevance check loop? In a legal context, a confident wrong answer is worse than no answer. The agent judges its own retrieval before responding, and retries with a reformulated query rather than answering from weakly-relevant chunks.
+# Mac/Linux
+source .venv/bin/activate
+```
 
+### 3. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Set up your API key
+
+Get a free Groq API key at [console.groq.com](https://console.groq.com) — no credit card required.
+
+```bash
+cp .env.example .env
+```
+
+Open `.env` and add your key:
+
+```
+GROQ_API_KEY=your_groq_api_key_here
+```
+
+### 5. Add legal PDFs
+
+Download Indian labour law PDFs from [indiacode.nic.in](https://indiacode.nic.in) or [legislative.gov.in](https://legislative.gov.in) and place them in `data/pdfs/`.
+
+### 6. Ingest documents into ChromaDB
+
+```bash
+python test_ingestion.py
+```
+
+You should see the chunk count printed. This step only needs to run once — ChromaDB persists the vectors to disk.
+
+### 7. Run the Streamlit UI
+
+```bash
+streamlit run src/ui/app.py
+```
+
+Or run in terminal:
+
+```bash
+python agentic_legal_saathi.py
+```
+
+---
+
+## Sample Queries
+
+```
+# English
+What is the minimum wage for a daily worker?
+Am I entitled to maternity leave?
+Are men and women paid equal wages?
+What happens if my employer doesn't pay me on time?
+What is MNREGA and how do I apply?
+
+# Hindi
+न्यूनतम मजदूरी क्या है?
+मुझे ओवरटाइम का पैसा कब मिलना चाहिए?
+मातृत्व लाभ के लिए मेरे क्या अधिकार हैं?
+```
+
+---
+
+## Key Design Decisions
+
+**Why ChromaDB over FAISS?** ChromaDB stores chunk metadata (source document, page number) alongside vectors, enabling source citations in every answer. FAISS is faster but supports no metadata, so citations are impossible.
+
+**Why MMR retrieval?** Maximal Marginal Relevance balances relevance with diversity — preventing 4 chunks from the same section being returned while a more relevant chunk from another Act is missed.
+
+**Why Groq over OpenAI?** Free tier, no credit card, comparable quality for structured legal explanation. Makes this project reproducible for anyone without API cost.
+
+**Why the relevance check loop?** In a legal context, a confident wrong answer is worse than no answer. The agent judges its own retrieval before responding, and retries with a reformulated query rather than answering from weakly-relevant chunks.
+
+---
+
+## Limitations
+
+- Covers central labour laws only — state-specific wage schedules and state Acts are not included
+- Translation quality for regional languages beyond Hindi degrades with googletrans
+- No conversation memory across sessions — each query is independent
+- Not a substitute for professional legal advice
+
+---
+
+## Disclaimer
+
+LegalSaathi provides general information based on publicly available Indian labour law documents. It is not a substitute for professional legal advice. For specific legal matters, consult a qualified lawyer or your nearest District Labour Officer.
+
+---
+
+## Built With
+
+- [LangChain](https://python.langchain.com)
+- [LangGraph](https://langchain-ai.github.io/langgraph/)
+- [Groq](https://groq.com)
+- [ChromaDB](https://www.trychroma.com)
+- [HuggingFace Sentence Transformers](https://huggingface.co/sentence-transformers)
+- [Streamlit](https://streamlit.io)
+- [India Code](https://indiacode.nic.in) — source of all legal documents
